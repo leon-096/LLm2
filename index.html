@@ -1,0 +1,1136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<meta name="theme-color" content="#2a1810" />
+<title>TWO MONTHS</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;500;700&family=EB+Garamond:ital,wght@0,400;0,500;1,400;1,500&family=Playfair+Display:ital,wght@0,400;0,600;1,400;1,600&display=swap" rel="stylesheet" />
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js"></script>
+
+<style>
+  /* ============================================================
+     PALETTE
+     cream paper    : #f7ecd5  / #fbf3e0
+     deep burgundy  : #5c1a1b
+     soft gold      : #c9a961
+     warm wood      : #2a1810  / #3e2723
+     ============================================================ */
+
+  :root {
+    --cream: #f7ecd5;
+    --cream-light: #fbf3e0;
+    --cream-dark: #ede0c0;
+    --burgundy: #5c1a1b;
+    --burgundy-soft: #7a2d2e;
+    --gold: #c9a961;
+    --gold-soft: #d9be7a;
+    --wood: #2a1810;
+    --wood-light: #3e2723;
+    --ink: #4a1416;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    width: 100%;
+    overflow-x: hidden;
+  }
+
+  body {
+    font-family: 'EB Garamond', Georgia, serif;
+    background: var(--wood);
+    color: var(--ink);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+
+  ::selection { background: var(--gold); color: var(--wood); }
+
+  /* ===== Scroll progress bar ===== */
+  #scroll-progress {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 3px;
+    width: 0%;
+    background: linear-gradient(90deg, var(--gold-soft), var(--gold), var(--burgundy-soft));
+    z-index: 1000;
+    transition: width 0.08s linear;
+    box-shadow: 0 0 8px rgba(201, 169, 97, 0.5);
+  }
+
+  /* ===== SCENE 1: ENVELOPE ===== */
+  #scene-envelope {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background:
+      radial-gradient(ellipse at 50% 35%, #4a2d1f 0%, var(--wood-light) 35%, var(--wood) 75%);
+    z-index: 100;
+    transition: opacity 1.2s ease, visibility 1.2s ease;
+    padding: 24px;
+  }
+  #scene-envelope::before {
+    /* soft desk-lamp pool of light */
+    content: '';
+    position: absolute;
+    top: 15%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 70vmin;
+    height: 70vmin;
+    background: radial-gradient(circle, rgba(255, 220, 160, 0.18) 0%, rgba(255, 220, 160, 0) 60%);
+    pointer-events: none;
+  }
+  #scene-envelope.hidden {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+  }
+
+  .envelope-wrap {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    perspective: 1200px;
+  }
+
+  .envelope {
+    position: relative;
+    width: min(78vw, 360px);
+    aspect-ratio: 1.55 / 1;
+    cursor: pointer;
+    transition: transform 0.4s cubic-bezier(.2,.8,.2,1);
+    transform-style: preserve-3d;
+  }
+  .envelope:hover { transform: translateY(-4px); }
+  .envelope:hover .envelope-shadow { transform: scale(1.05); opacity: 0.55; }
+
+  .envelope-shadow {
+    position: absolute;
+    bottom: -18px;
+    left: 8%;
+    width: 84%;
+    height: 24px;
+    background: radial-gradient(ellipse at center, rgba(0,0,0,0.65) 0%, rgba(0,0,0,0) 70%);
+    filter: blur(4px);
+    transition: transform 0.4s ease, opacity 0.4s ease;
+    z-index: 1;
+  }
+
+  .envelope-body {
+    position: absolute;
+    inset: 0;
+    background:
+      linear-gradient(135deg, #f3e3c0 0%, #ecd0a3 50%, #e2c085 100%);
+    border-radius: 4px;
+    box-shadow:
+      inset 0 -8px 16px rgba(120, 80, 40, 0.25),
+      inset 0 8px 16px rgba(255, 240, 200, 0.4),
+      0 10px 30px rgba(0,0,0,0.5);
+    overflow: hidden;
+  }
+  /* paper grain on envelope */
+  .envelope-body::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image:
+      repeating-linear-gradient(0deg, rgba(120,80,40,0.025) 0 1px, transparent 1px 3px),
+      repeating-linear-gradient(90deg, rgba(120,80,40,0.025) 0 1px, transparent 1px 3px);
+    pointer-events: none;
+  }
+
+  .envelope-flap {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 60%;
+    background:
+      linear-gradient(180deg, #e8cf9f 0%, #d9b878 100%);
+    clip-path: polygon(0 0, 100% 0, 50% 100%);
+    transform-origin: top center;
+    transition: transform 0.9s cubic-bezier(.5,.05,.25,1);
+    z-index: 3;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+  }
+  .envelope-flap::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: repeating-linear-gradient(0deg, rgba(120,80,40,0.03) 0 1px, transparent 1px 4px);
+  }
+
+  .wax-seal {
+    position: absolute;
+    top: 45%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 35% 30%, var(--burgundy-soft) 0%, var(--burgundy) 60%, #3a0e0f 100%);
+    color: var(--gold);
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    font-size: 26px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 4;
+    box-shadow:
+      inset -2px -3px 6px rgba(0,0,0,0.4),
+      inset 2px 2px 4px rgba(255,200,150,0.25),
+      0 2px 8px rgba(0,0,0,0.4);
+    text-shadow: 0 1px 2px rgba(0,0,0,0.4);
+    transition: opacity 0.4s ease, transform 0.4s ease;
+  }
+  .envelope.open .envelope-flap { transform: rotateX(180deg); }
+  .envelope.open .wax-seal {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.6);
+  }
+
+  .letter-preview {
+    position: absolute;
+    left: 6%;
+    right: 6%;
+    bottom: 0;
+    height: 92%;
+    background: linear-gradient(180deg, var(--cream-light) 0%, var(--cream) 100%);
+    border-radius: 2px;
+    box-shadow: 0 -2px 8px rgba(0,0,0,0.15);
+    z-index: 2;
+    opacity: 0;
+    transform: translateY(40%);
+    transition: transform 1.1s cubic-bezier(.2,.8,.2,1) 0.35s, opacity 0.6s ease 0.35s;
+  }
+  .envelope.open .letter-preview {
+    opacity: 1;
+    transform: translateY(-22%);
+  }
+  /* faint writing lines on preview letter */
+  .letter-preview::before {
+    content: '';
+    position: absolute;
+    inset: 14% 12% 8% 12%;
+    background-image: repeating-linear-gradient(0deg, rgba(92,26,27,0.18) 0 1px, transparent 1px 14px);
+    opacity: 0.6;
+  }
+
+  .caption {
+    margin-top: 38px;
+    font-family: 'Caveat', cursive;
+    font-size: clamp(20px, 4.5vw, 28px);
+    color: var(--gold-soft);
+    text-align: center;
+    text-shadow: 0 1px 4px rgba(0,0,0,0.4);
+    opacity: 0;
+    animation: fade-in 1.6s ease 0.6s forwards;
+  }
+  .hint {
+    margin-top: 10px;
+    font-family: 'EB Garamond', serif;
+    font-style: italic;
+    font-size: 14px;
+    color: rgba(217, 190, 122, 0.65);
+    letter-spacing: 0.08em;
+    text-transform: lowercase;
+    opacity: 0;
+    animation: fade-in 2s ease 1.4s forwards, pulse-soft 2.4s ease-in-out 2.4s infinite;
+  }
+
+  @keyframes fade-in { to { opacity: 1; } }
+  @keyframes pulse-soft { 50% { opacity: 0.4; } }
+
+  /* ===== SCENE 2: LETTER ===== */
+  #scene-letter {
+    position: relative;
+    min-height: 100vh;
+    padding: 64px 0 80px;
+    background:
+      linear-gradient(180deg, var(--wood) 0%, var(--wood-light) 8%, #4a2d1f 100%);
+    opacity: 0;
+    visibility: hidden;
+  }
+  #scene-letter.active {
+    opacity: 1;
+    visibility: visible;
+    transition: opacity 1.2s ease 0.3s;
+  }
+
+  .paper {
+    position: relative;
+    width: min(92vw, 680px);
+    margin: 0 auto;
+    padding: clamp(36px, 7vw, 72px) clamp(24px, 6vw, 60px) clamp(48px, 8vw, 80px);
+    background:
+      linear-gradient(180deg, var(--cream-light) 0%, var(--cream) 8%, var(--cream) 92%, var(--cream-dark) 100%);
+    border-radius: 2px;
+    box-shadow:
+      0 6px 14px rgba(0,0,0,0.35),
+      0 24px 60px rgba(0,0,0,0.45),
+      inset 0 0 60px rgba(180, 140, 80, 0.12);
+    /* deckled edge effect */
+    clip-path: polygon(
+      0.5% 0.3%, 1.4% 0%, 4% 0.4%, 8% 0.1%, 14% 0.5%, 22% 0%, 32% 0.4%, 45% 0.1%, 58% 0.5%, 72% 0%, 84% 0.4%, 93% 0.1%, 98% 0.5%, 99.5% 0.3%,
+      99.7% 1.5%, 100% 4%, 99.6% 8%, 99.9% 14%, 99.5% 22%, 100% 32%, 99.6% 45%, 99.9% 58%, 99.5% 72%, 100% 84%, 99.6% 93%, 99.9% 98%, 99.5% 99.6%,
+      98.5% 99.7%, 93% 100%, 84% 99.6%, 72% 100%, 58% 99.5%, 45% 100%, 32% 99.6%, 22% 100%, 14% 99.5%, 8% 100%, 4% 99.6%, 1.4% 100%, 0.3% 99.5%,
+      0.4% 98%, 0% 93%, 0.4% 84%, 0.1% 72%, 0.5% 58%, 0% 45%, 0.4% 32%, 0.1% 22%, 0.5% 14%, 0% 8%, 0.4% 4%, 0.3% 1.5%
+    );
+  }
+  /* paper grain + faint guide lines */
+  .paper::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background-image:
+      repeating-linear-gradient(0deg, rgba(92,26,27,0.04) 0 1px, transparent 1px 32px),
+      repeating-linear-gradient(0deg, rgba(120,80,40,0.02) 0 1px, transparent 1px 2px),
+      repeating-linear-gradient(90deg, rgba(120,80,40,0.02) 0 1px, transparent 1px 2px);
+    opacity: 0.7;
+  }
+  /* warm vignette on paper edges */
+  .paper::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: radial-gradient(ellipse at center, rgba(0,0,0,0) 60%, rgba(120, 70, 30, 0.18) 100%);
+  }
+
+  .salutation {
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    font-size: clamp(22px, 4.5vw, 30px);
+    color: var(--burgundy);
+    margin-bottom: 1.5em;
+    position: relative;
+    z-index: 1;
+  }
+
+  .letter-body {
+    font-family: 'EB Garamond', serif;
+    font-size: clamp(17px, 2.6vw, 20px);
+    line-height: 2.0;
+    color: var(--ink);
+    position: relative;
+    z-index: 1;
+  }
+  .letter-body p {
+    margin-bottom: 1.4em;
+  }
+  .letter-body p:last-child { margin-bottom: 0.4em; }
+
+  /* "I love you" block — each item on its own line, centered for emphasis */
+  .letter-body p.iloveryou-block {
+    margin: 1.6em 0;
+    text-align: center;
+  }
+
+  /* Normal word — fades in when .shown is added */
+  .word {
+    display: inline-block;
+    opacity: 0;
+    transform: translateY(6px);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    margin-right: 0.28em;
+    white-space: pre;
+  }
+  .word.shown {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* Typo-wrap is a container for typo chars + the corrected word.
+     It is always visible (no fade-in), so the typo animation can be seen. */
+  .word.typo-wrap {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+
+  /* Each wrong character — inline, no spacing, so they read as a continuous misspelling */
+  .typo-char {
+    display: inline;
+    color: var(--burgundy-soft);
+    opacity: 0.85;
+  }
+
+  /* The blinking caret that follows the writing position.
+     It is inserted right after the currently-typed word/char. */
+  .caret {
+    display: inline-block;
+    width: 2px;
+    height: 1.1em;
+    background: var(--burgundy);
+    vertical-align: text-bottom;
+    margin-left: 1px;
+    margin-bottom: 2px;
+    animation: blink 0.85s steps(2, start) infinite;
+    transform: translateY(2px);
+  }
+  @keyframes blink { 50% { opacity: 0; } }
+
+  .signature-block {
+    margin-top: 2.5em;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* Wrapper holds the signature text + the pen-nib as siblings.
+     This is critical: clip-path on .signature would clip a child pen-nib,
+     so the pen-nib must live OUTSIDE .signature. */
+  .signature-wrap {
+    position: relative;
+    display: inline-block;
+    cursor: pointer;
+    user-select: none;
+  }
+  .signature {
+    font-family: 'Caveat', cursive;
+    font-size: clamp(36px, 8vw, 54px);
+    color: var(--burgundy);
+    line-height: 1.2;
+    display: inline-block;
+    /* Allow multi-line signatures (e.g. "Forever Yours\nAvinaba") */
+    white-space: pre-line;
+    /* clip-path animated via JS; starts fully hidden from the right */
+    clip-path: inset(0 100% 0 0);
+    transition: clip-path 0.05s linear;
+  }
+  .signature.done { clip-path: inset(0 0 0 0); }
+
+  .signature-wrap .pen-nib {
+    position: absolute;
+    top: 52%;
+    left: 0;
+    /* translate(-100%, -50%) places the nib's right edge at `left`,
+       so the tip sits exactly at the leading edge of the reveal. */
+    transform: translate(-100%, -50%);
+    width: 16px;
+    height: 16px;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+    pointer-events: none;
+    z-index: 2;
+  }
+  .signature-wrap .pen-nib svg { width: 100%; height: 100%; display: block; }
+  .signature-wrap.drawing .pen-nib { opacity: 1; }
+  .signature-wrap.done .pen-nib { opacity: 0; }
+
+  .date {
+    font-family: 'Caveat', cursive;
+    font-size: clamp(18px, 4vw, 24px);
+    color: var(--burgundy-soft);
+    margin-top: 6px;
+    opacity: 0;
+    transition: opacity 0.8s ease 0.4s;
+  }
+  .date.shown { opacity: 1; }
+  .date .extra-heart {
+    display: inline-block;
+    margin-left: 8px;
+    color: var(--burgundy);
+    opacity: 0;
+    transform: scale(0.5);
+    transition: opacity 0.4s ease, transform 0.4s ease;
+  }
+  .date .extra-heart.shown { opacity: 1; transform: scale(1); }
+
+  .skip-btn {
+    position: fixed;
+    right: 18px;
+    bottom: 18px;
+    background: rgba(247, 236, 213, 0.08);
+    color: var(--gold-soft);
+    border: 1px solid rgba(201, 169, 97, 0.4);
+    padding: 8px 14px;
+    font-family: 'EB Garamond', serif;
+    font-style: italic;
+    font-size: 13px;
+    letter-spacing: 0.05em;
+    border-radius: 2px;
+    cursor: pointer;
+    opacity: 0;
+    pointer-events: none;
+    z-index: 50;
+    transition: opacity 0.6s ease, background 0.2s ease;
+    backdrop-filter: blur(4px);
+  }
+  .skip-btn.visible { opacity: 0.85; pointer-events: auto; }
+  .skip-btn:hover { background: rgba(201, 169, 97, 0.15); opacity: 1; }
+
+  /* ===== STICKY NOTE EASTER EGG ===== */
+  .sticky-note {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%) translateY(120%);
+    background: linear-gradient(180deg, #fff7c4 0%, #ffe98a 100%);
+    color: var(--burgundy);
+    font-family: 'Caveat', cursive;
+    font-size: 20px;
+    padding: 20px 26px 22px;
+    width: min(86vw, 320px);
+    text-align: center;
+    box-shadow: 0 12px 30px rgba(0,0,0,0.4), 0 2px 6px rgba(0,0,0,0.2);
+    border-radius: 1px;
+    z-index: 200;
+    transition: transform 0.7s cubic-bezier(.2,.8,.2,1);
+    line-height: 1.4;
+  }
+  .sticky-note::before {
+    content: '';
+    position: absolute;
+    top: -8px;
+    left: 50%;
+    transform: translateX(-50%) rotate(-3deg);
+    width: 60px;
+    height: 16px;
+    background: rgba(201, 169, 97, 0.5);
+    border-radius: 1px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  }
+  .sticky-note.shown {
+    transform: translateX(-50%) translateY(0);
+  }
+
+  /* ===== TOAST (right-click) ===== */
+  .toast {
+    position: fixed;
+    top: 24px;
+    left: 50%;
+    transform: translateX(-50%) translateY(-200%);
+    background: var(--burgundy);
+    color: var(--cream-light);
+    font-family: 'Caveat', cursive;
+    font-size: 22px;
+    padding: 12px 22px;
+    border-radius: 2px;
+    z-index: 300;
+    transition: transform 0.5s cubic-bezier(.2,.8,.2,1);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.4);
+    border: 1px solid var(--gold);
+  }
+  .toast.shown { transform: translateX(-50%) translateY(0); }
+
+  /* ===== AUDIO TOGGLE ===== */
+  .audio-toggle {
+    position: fixed;
+    top: 16px;
+    right: 16px;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: rgba(247, 236, 213, 0.1);
+    border: 1px solid rgba(201, 169, 97, 0.4);
+    color: var(--gold-soft);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 1000;
+    backdrop-filter: blur(4px);
+    transition: background 0.2s ease, opacity 0.6s ease;
+    opacity: 0;
+    pointer-events: none;
+  }
+  .audio-toggle.visible { opacity: 0.8; pointer-events: auto; }
+  .audio-toggle:hover { background: rgba(201, 169, 97, 0.2); opacity: 1; }
+  .audio-toggle svg { width: 18px; height: 18px; }
+  .audio-toggle.muted svg .wave { display: none; }
+  .audio-toggle.muted::after {
+    content: '';
+    position: absolute;
+    width: 22px;
+    height: 2px;
+    background: var(--burgundy-soft);
+    transform: rotate(-45deg);
+  }
+
+  /* ===== RESPONSIVE ===== */
+  @media (max-width: 480px) {
+    .paper { width: 94vw; padding: 40px 22px 56px; }
+    .letter-body { font-size: 17px; line-height: 1.95; }
+    .signature { font-size: 40px; }
+  }
+
+  /* ===== REDUCED MOTION ===== */
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.2s !important;
+    }
+    .word { opacity: 1 !important; transform: none !important; }
+    .word.typo-wrap { opacity: 1 !important; }
+    .signature { clip-path: inset(0 0 0 0) !important; }
+    .signature-wrap .pen-nib { opacity: 0 !important; }
+    .date { opacity: 1 !important; }
+    #scene-letter { opacity: 1; visibility: visible; }
+    #scene-envelope { position: relative; }
+  }
+</style>
+</head>
+<body>
+
+<div id="scroll-progress" aria-hidden="true"></div>
+
+<!-- ============ SCENE 1: ENVELOPE ============ -->
+<section id="scene-envelope" aria-label="A letter has arrived">
+  <div class="envelope-wrap">
+    <div class="envelope" id="envelope" role="button" tabindex="0" aria-label="Open the envelope">
+      <div class="envelope-shadow"></div>
+      <div class="envelope-body"></div>
+      <div class="letter-preview"></div>
+      <div class="envelope-flap"></div>
+      <div class="wax-seal" aria-hidden="true">P</div>
+    </div>
+    <p class="hint">tap to open</p>
+  </div>
+</section>
+
+<!-- ============ SCENE 2: LETTER ============ -->
+<section id="scene-letter" aria-label="The letter">
+  <article class="paper" id="paper">
+
+    <p class="salutation" id="salutation">My Dearest,</p>
+
+    <div class="letter-body" id="letter-body" aria-live="polite">
+      <!-- Words injected by JS -->
+    </div>
+
+    <div class="signature-block">
+      <div class="signature-wrap" id="signature-wrap">
+        <div class="signature" id="signature" aria-label="Signature">Always yours</div>
+        <span class="pen-nib" id="pen-nib" aria-hidden="true">
+          <svg viewBox="0 0 14 14" xmlns="http://www.w3.org/2000/svg">
+            <path d="M14 7 L0 0 L4 7 L0 14 Z" fill="#5c1a1b" stroke="#c9a961" stroke-width="0.5"/>
+          </svg>
+        </span>
+      </div>
+      <div class="date" id="date">
+        July 29, 2026
+        <span class="extra-heart" aria-hidden="true">♥</span>
+      </div>
+    </div>
+
+  </article>
+
+  <button class="skip-btn" id="skip-btn" aria-label="Skip to end of letter">skip to end</button>
+</section>
+
+<!-- ============ EASTER EGGS / UI ============ -->
+<div class="sticky-note" id="sticky-note" role="status" aria-live="polite">
+  I was thinking of you while you were away.
+</div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<button class="audio-toggle" id="audio-toggle" aria-label="Toggle ambient sound">
+  <svg viewBox="0 0 24 24" fill="currentColor">
+    <path d="M3 9v6h4l5 5V4L7 9H3z"/>
+    <path class="wave" d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02z"/>
+    <path class="wave" d="M14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/>
+  </svg>
+</button>
+
+<script>
+/* ================================================================
+   LOVE LETTER — single file
+   EDIT THE LETTER CONTENT IN THE `LETTER_CONTENT` object below.
+   ================================================================ */
+
+const LETTER_CONTENT = {
+  salutation: "My Dear Priontee,",
+  // Each item in `paragraphs` is one paragraph. It can be either:
+  //   - An array of words:  ["word1", "word2", ...]
+  //   - A special block:    { class: "iloveryou-block", multiline: true,
+  //                            words: ["I love you", "I love you", ...] }
+  //     (multiline: true inserts a <br> after each word so each appears
+  //      on its own line during the typing animation.)
+  // To create a charming "typo" moment, use: { typo: "wrong", correct: "right" }
+  //   — the wrong text types out char-by-char, pauses, backspaces,
+  //     then the correct word appears.
+  paragraphs: [
+    ["(Ektu", "beshi", "formally", "shuru", "korlam", "i", "guess)"],
+    ["I", "love", "you"],
+    ["Dekhte", "dekhte", "kibhabe", "jani", "dui", "mash", "hoye", "gelo,", "ter", "o", "pailam", "na..."],
+    ["Well,", "tor", "sathe", "jokhon", "time", "spend", "kori", "tokhon", "emoni", "hoy,", "ter", "pai", "na", "time", "kon", "dik", "diye", "jay."],
+    ["Mone", "hocche", "ei", "duidin", "agei", "na", "amra", "relation", "e", "gelam", "but", "already", "dui", "mash", "hoye", "gese."],
+    ["I", "know,", "ei", "long", "distance", "relation", "onek", "tough...", "but", "ei", "distance", "amader", "bhalobashar", "shamne", "kichui", "na.", "Protidin", "shokale", "uthe", "toke", "age", "msg", "dite", "mon", "chay,", "protidin", "rat", "e", "ghumanor", "time", "e", "tor", "kotha", "e", "mathay", "ghure."],
+    ["And....", "Toke", "kichu", "bolar", "chilo...", "Tui", "amr", "gf,", "amr", "shobcheye", "trusted", "manush,", "so", "tor", "theke", "to", "lukiye", "rakhar", "mane", "nei.", "Ei", "koyekdin", "age", "amr", "mathay", "actually", "onk", "ulta", "palta", "chinta", "ashtesilo", "ze", "adou", "tor", "sathe", "relation", "e", "giye", "thik", "korsi", "kina,", "breakup", "er", "kotha", "o", "ghurtesilo", "mathay.....", "But,", "eshob", "ulta", "palta", "chinta", "amake", "manipulate", "korte", "pare", "nai."],
+    ["Shotti", "Priontee,", "toke", "onek", "bhalobashi", "and", "trust", "kori.", "Janina", "keno", "eshob", "ulta", "palta", "chinta", "ashche...", "But", "ekhon", "eshob", "nai", "mathay."],
+    ["I", "love", "you.", "And", "ofcourse", "ami", "kono", "bhabei", "chai", "na", "tor", "sathe", "breakup", "hok."],
+    ["Jaihok,", "ei", "khushir", "din", "e", "koto", "kichu", "bollam..."],
+    ["2", "months...", "hmm.....", "onek", "shomoy...", "abr", "khub", "e", "olpo", "shomoy."],
+    ["I", "know,", "amader", "relation", "e", "onek", "ups", "and", "downs", "ashche", "and", "etao", "jani", "ze", "future", "eo", "ashbe.", "But,", "eshob", "temporary", "problems", "amader", "bond", "bhangte", "parbe", "na.", "Ami", "to", "ofcourse", "konodin", "give", "up", "korbo", "na.", "Tui", "just", "korish", "na....", "sathe", "thakis", "amr", "and", "kono", "problem", "hoile", "shei", "problem", "tar", "sathe", "duijon", "mile", "fight", "korbo,", "eke", "oporer", "sathe", "fight", "na."],
+    ["I", "love", "you", "and", "I", "care", "about", "you,", "really."],
+    ["And", "shotti", "toke", "onek", "trust", "kori", "ami...", "Ami", "jani", "tui", "ei", "trust", "er", "morjada", "rakhbi,", "amakeo", "trust", "korte", "parish", "tui...ami", "kokhono", "betray", "korbona", "ettuk", "jene", "rakh."],
+    ["Ami", "shobshomoy", "e", "tor", "sathe", "thakbo,", "tor", "jekono", "proyojon", "e", "tor", "sathe", "thakbo", "ami."],
+    ["Kotto", "kichu", "lekhlam..", "Don't", "mind.", "Hehe"],
+    ["And", "last", "bar", "er", "moto", "ei", "bar", "o", "lekhi,"],
+    { class: "iloveryou-block", multiline: true, words: [
+      "I love you", "I love you", "I love you", "I love you", "I love you",
+      "I love you", "I love you", "I love you", "I love you", "I love you",
+      "I love you", "I love you", "I love you", "I love you", "I love you",
+      "I love you", "I love you", "I love you", "I love you", "I love you"
+    ]},
+    ["By", "the", "way,", "ebar", "kintu", "late", "hoi", "nai....", "Last", "bar", "onk", "late", "e", "disilam", "letter", "ta....", "Btw,", "Amar", "Kintu", "Mone", "Ache.", "Last time", "Amar", "Marriage", "Proposal", "Accept", "Korsili", "Hehehe"]
+  ],
+  signature: "Forever Yours\nAvinaba",
+  date: "July 29, 2026"
+};
+
+/* ================================================================
+   SOUND ENGINE (Tone.js)
+   ================================================================ */
+const Sound = {
+  ready: false,
+  started: false,
+  muted: false,
+  ambientFilter: null,
+  pencilSource: null,
+  pencilFilter: null,
+  paperSource: null,
+  paperFilter: null,
+  chimeSynth: null,
+  masterGain: null,
+
+  async init() {
+    if (this.ready) return;
+    await Tone.start();
+
+    this.masterGain = new Tone.Gain(0.9).toDestination();
+
+    // --- Ambient warm pad (filtered noise + soft sine drone) ---
+    this.ambientFilter = new Tone.Filter({
+      type: "lowpass",
+      frequency: 600,
+      Q: 0.4
+    }).connect(this.masterGain);
+
+    const ambientGain = new Tone.Gain(0.08).connect(this.ambientFilter);
+
+    const noise = new Tone.Noise("brown").connect(ambientGain);
+    noise.start();
+
+    const drone1 = new Tone.Oscillator({
+      type: "sine", frequency: 110, volume: -28
+    }).connect(ambientGain);
+    const drone2 = new Tone.Oscillator({
+      type: "sine", frequency: 165, volume: -32
+    }).connect(ambientGain);
+    drone1.start();
+    drone2.start();
+
+    // slow LFO on filter for a breathing feel
+    const lfo = new Tone.LFO({ frequency: 0.07, min: 400, max: 900 });
+    lfo.connect(this.ambientFilter.frequency);
+    lfo.start();
+
+    // --- Pencil scratch (bandpassed noise burst) ---
+    this.pencilFilter = new Tone.Filter({
+      type: "bandpass", frequency: 2400, Q: 1.2
+    }).connect(this.masterGain);
+    this.pencilSource = new Tone.NoiseSynth({
+      noise: { type: "pink" },
+      envelope: { attack: 0.001, decay: 0.05, sustain: 0 },
+      volume: -22
+    }).connect(this.pencilFilter);
+
+    // --- Paper rustle (longer filtered noise sweep) ---
+    this.paperFilter = new Tone.Filter({
+      type: "bandpass", frequency: 1200, Q: 0.8
+    }).connect(this.masterGain);
+    this.paperSource = new Tone.NoiseSynth({
+      noise: { type: "white" },
+      envelope: { attack: 0.02, decay: 0.4, sustain: 0 },
+      volume: -18
+    }).connect(this.paperFilter);
+
+    // --- Soft chime (poly synth, C major) — played when the letter finishes ---
+    this.chimeSynth = new Tone.PolySynth(Tone.Synth, {
+      oscillator: { type: "sine" },
+      envelope: { attack: 0.6, decay: 0.5, sustain: 0.3, release: 4 },
+      volume: -16
+    }).connect(this.masterGain);
+
+    const delay = new Tone.FeedbackDelay({ delayTime: "8n.", feedback: 0.35, wet: 0.3 });
+    this.chimeSynth.connect(delay);
+    delay.toDestination();
+
+    this.ready = true;
+  },
+
+  async start() {
+    if (this.started) return;
+    await this.init();
+    this.started = true;
+    document.getElementById('audio-toggle').classList.add('visible');
+  },
+
+  pencil() {
+    if (!this.ready || this.muted) return;
+    try { this.pencilSource.triggerAttackRelease(0.04); } catch (e) {}
+  },
+
+  paper() {
+    if (!this.ready || this.muted) return;
+    try { this.paperSource.triggerAttackRelease(0.35); } catch (e) {}
+  },
+
+  chime() {
+    if (!this.ready || this.muted) return;
+    try {
+      // C major chord, gentle
+      this.chimeSynth.triggerAttackRelease(["C4", "E4", "G4", "C5"], "2n");
+    } catch (e) {}
+  },
+
+  toggleMute() {
+    if (!this.ready) return false;
+    this.muted = !this.muted;
+    this.masterGain.gain.rampTo(this.muted ? 0 : 0.9, 0.3);
+    return this.muted;
+  }
+};
+
+/* ================================================================
+   SCENE 1: ENVELOPE OPEN
+   ================================================================ */
+const envelope = document.getElementById('envelope');
+const sceneEnvelope = document.getElementById('scene-envelope');
+const sceneLetter = document.getElementById('scene-letter');
+let opened = false;
+
+async function openEnvelope() {
+  if (opened) return;
+  opened = true;
+  await Sound.start();
+  envelope.classList.add('open');
+  Sound.paper();
+  // After the flap opens + letter peeks, transition to the letter scene
+  setTimeout(() => {
+    Sound.paper();
+    sceneEnvelope.classList.add('hidden');
+    sceneLetter.classList.add('active');
+    startLetter();
+  }, 1700);
+}
+
+envelope.addEventListener('click', openEnvelope);
+envelope.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter' || e.key === ' ') {
+    e.preventDefault();
+    openEnvelope();
+  }
+});
+
+/* ================================================================
+   SCENE 2: LETTER TYPING
+   ================================================================ */
+const letterBody = document.getElementById('letter-body');
+const skipBtn = document.getElementById('skip-btn');
+const signatureEl = document.getElementById('signature');
+const signatureWrap = document.getElementById('signature-wrap');
+const penNib = document.getElementById('pen-nib');
+const dateEl = document.getElementById('date');
+const salutationEl = document.getElementById('salutation');
+
+const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+let typingComplete = false;
+let typingAborted = false;
+let activeCaret = null;  // tracked so the skip button can remove it instantly
+
+function renderParagraphs() {
+  letterBody.innerHTML = '';
+  LETTER_CONTENT.paragraphs.forEach((para) => {
+    const p = document.createElement('p');
+    // A paragraph can be either an array of words, or an object with
+    // { class, multiline, words } for special blocks.
+    const isObj = !Array.isArray(para);
+    const words = isObj ? para.words : para;
+    if (isObj && para.class) p.classList.add(para.class);
+    words.forEach((w, wIdx) => {
+      let elem;
+      if (typeof w === 'string') {
+        elem = document.createElement('span');
+        elem.className = 'word';
+        elem.textContent = w;
+      } else if (w.typo) {
+        // wrapper span; will receive the typo animation
+        elem = document.createElement('span');
+        elem.className = 'word typo-wrap';
+        elem.dataset.typo = w.typo;
+        elem.dataset.correct = w.correct;
+      }
+      p.appendChild(elem);
+      // For multiline blocks, insert a <br> after each word (except the last)
+      // so each item appears on its own line.
+      if (isObj && para.multiline && wIdx < words.length - 1) {
+        p.appendChild(document.createElement('br'));
+      }
+    });
+    letterBody.appendChild(p);
+  });
+}
+
+function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+function rand(min, max) { return Math.random() * (max - min) + min; }
+
+/* The caret follows the writing position. It is placed:
+   - right AFTER the currently-typed word (for normal words)
+   - INSIDE the typo-wrap, after the last typed wrong char (for typos)
+   This ensures the caret always sits at the natural writing position,
+   never floating in empty space. */
+async function typeOut() {
+  if (prefersReducedMotion) {
+    document.querySelectorAll('.word').forEach(w => {
+      if (w.classList.contains('typo-wrap')) {
+        w.textContent = w.dataset.correct;
+      }
+      w.classList.add('shown');
+    });
+    finishTyping();
+    return;
+  }
+
+  const words = Array.from(document.querySelectorAll('#letter-body .word'));
+  const caret = document.createElement('span');
+  caret.className = 'caret';
+  activeCaret = caret;
+
+  for (let i = 0; i < words.length; i++) {
+    if (typingAborted) { caret.remove(); activeCaret = null; return; }
+
+    const w = words[i];
+
+    if (w.classList.contains('typo-wrap')) {
+      // --- Typo animation ---
+      const wrong = w.dataset.typo;
+      const correct = w.dataset.correct;
+      const wrongChars = wrong.split('');
+
+      // Move caret INSIDE the wrap; wrong chars will be inserted before it
+      w.appendChild(caret);
+
+      // Type wrong chars one at a time
+      for (let c = 0; c < wrongChars.length; c++) {
+        if (typingAborted) { caret.remove(); activeCaret = null; return; }
+        const ch = document.createElement('span');
+        ch.className = 'typo-char';
+        ch.textContent = wrongChars[c];
+        w.insertBefore(ch, caret);
+        Sound.pencil();
+        await sleep(rand(60, 110));
+      }
+      await sleep(220);
+
+      // Backspace: remove wrong chars in reverse
+      const charSpans = Array.from(w.querySelectorAll('.typo-char'));
+      for (let c = charSpans.length - 1; c >= 0; c--) {
+        if (typingAborted) { caret.remove(); activeCaret = null; return; }
+        charSpans[c].remove();
+        Sound.pencil();
+        await sleep(40);
+      }
+
+      // Show the correct word as a text node (before the caret)
+      const textNode = document.createTextNode(correct);
+      w.insertBefore(textNode, caret);
+      w.classList.add('shown');
+      Sound.pencil();
+
+      // Move caret back outside the wrap, right after it
+      w.parentNode.insertBefore(caret, w.nextSibling);
+    } else {
+      // --- Normal word ---
+      // Place caret immediately AFTER this word (before the next word/space/null)
+      w.parentNode.insertBefore(caret, w.nextSibling);
+      w.classList.add('shown');
+      Sound.pencil();
+    }
+
+    await sleep(rand(80, 160));
+  }
+  caret.remove();
+  activeCaret = null;
+  finishTyping();
+}
+
+function finishTyping() {
+  if (typingComplete) return;
+  typingComplete = true;
+  skipBtn.classList.remove('visible');
+  drawSignature();
+  // Reveal the date once the signature has mostly drawn
+  setTimeout(() => dateEl.classList.add('shown'), 1800);
+}
+
+function drawSignature() {
+  signatureEl.textContent = LETTER_CONTENT.signature;
+
+  if (prefersReducedMotion) {
+    signatureEl.classList.add('done');
+    signatureWrap.classList.add('done');
+    return;
+  }
+
+  signatureWrap.classList.add('drawing');
+  signatureEl.style.clipPath = 'inset(0 100% 0 0)';
+  penNib.style.left = '0%';
+
+  const duration = 2400;
+  const start = performance.now();
+  function step(now) {
+    const t = Math.min(1, (now - start) / duration);
+    // ease-out cubic
+    const eased = 1 - Math.pow(1 - t, 3);
+    const reveal = 100 - (eased * 100);  // 100 → 0
+    signatureEl.style.clipPath = `inset(0 ${reveal}% 0 0)`;
+    // Pen-nib's right edge tracks the leading edge of the reveal
+    penNib.style.left = `${eased * 100}%`;
+    if (t < 1) {
+      requestAnimationFrame(step);
+    } else {
+      signatureEl.classList.add('done');
+      signatureWrap.classList.remove('drawing');
+      signatureWrap.classList.add('done');
+      // Soft chime to mark the end of the letter
+      setTimeout(() => Sound.chime(), 250);
+    }
+  }
+  requestAnimationFrame(step);
+}
+
+async function startLetter() {
+  salutationEl.textContent = LETTER_CONTENT.salutation;
+  signatureEl.textContent = LETTER_CONTENT.signature;
+  // Update the date text node (firstChild) without touching the heart span
+  if (dateEl.firstChild && dateEl.firstChild.nodeType === Node.TEXT_NODE) {
+    dateEl.firstChild.nodeValue = LETTER_CONTENT.date;
+  }
+  renderParagraphs();
+
+  // Show the skip button after 5 seconds (if still typing)
+  setTimeout(() => {
+    if (!typingComplete) skipBtn.classList.add('visible');
+  }, 5000);
+
+  // Brief pause so the paper feels settled before writing begins
+  await sleep(600);
+  typeOut();
+}
+
+skipBtn.addEventListener('click', () => {
+  typingAborted = true;
+  // Remove the caret immediately so it doesn't linger mid-sleep
+  if (activeCaret) { activeCaret.remove(); activeCaret = null; }
+  // Reveal every word instantly; collapse typo-wraps to their correct word
+  document.querySelectorAll('.word').forEach(w => {
+    if (w.classList.contains('typo-wrap')) {
+      w.textContent = w.dataset.correct;
+    }
+    w.classList.add('shown');
+  });
+  finishTyping();
+});
+
+/* ================================================================
+   SCROLL PROGRESS
+   ================================================================ */
+const scrollBar = document.getElementById('scroll-progress');
+window.addEventListener('scroll', () => {
+  const h = document.documentElement;
+  const max = h.scrollHeight - h.clientHeight;
+  const pct = max > 0 ? (h.scrollTop / max) * 100 : 0;
+  scrollBar.style.width = pct + '%';
+}, { passive: true });
+
+/* ================================================================
+   EASTER EGG 1: Tab away + return after 60s → sticky note
+   ================================================================ */
+let hiddenSince = null;
+const stickyNote = document.getElementById('sticky-note');
+document.addEventListener('visibilitychange', () => {
+  if (document.hidden) {
+    hiddenSince = Date.now();
+  } else {
+    if (hiddenSince && Date.now() - hiddenSince >= 60000) {
+      setTimeout(() => {
+        stickyNote.classList.add('shown');
+        setTimeout(() => stickyNote.classList.remove('shown'), 9000);
+      }, 800);
+    }
+    hiddenSince = null;
+  }
+});
+
+/* ================================================================
+   EASTER EGG 2: Right-click on paper → "Copy my heart? ♥"
+   ================================================================ */
+const toast = document.getElementById('toast');
+let toastTimer = null;
+function showToast(text) {
+  toast.textContent = text;
+  toast.classList.add('shown');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => toast.classList.remove('shown'), 2400);
+}
+document.getElementById('paper').addEventListener('contextmenu', (e) => {
+  e.preventDefault();
+  showToast('Copy my heart?  ♥');
+});
+
+/* ================================================================
+   EASTER EGG 3: Triple-click signature → tiny heart next to date
+   ================================================================ */
+let sigClicks = 0;
+let sigClickTimer = null;
+signatureWrap.addEventListener('click', () => {
+  sigClicks++;
+  clearTimeout(sigClickTimer);
+  sigClickTimer = setTimeout(() => { sigClicks = 0; }, 600);
+  if (sigClicks >= 3) {
+    sigClicks = 0;
+    const heart = dateEl.querySelector('.extra-heart');
+    if (heart) heart.classList.add('shown');
+  }
+});
+
+/* ================================================================
+   AUDIO TOGGLE
+   ================================================================ */
+const audioToggle = document.getElementById('audio-toggle');
+audioToggle.addEventListener('click', async () => {
+  if (!Sound.ready) {
+    await Sound.start();
+  } else {
+    const muted = Sound.toggleMute();
+    audioToggle.classList.toggle('muted', muted);
+  }
+});
+
+/* ================================================================
+   PRELOAD — populate the letter DOM (hidden until envelope opens)
+   ================================================================ */
+renderParagraphs();
+</script>
+
+</body>
+</html>
