@@ -32,6 +32,8 @@
     --wood: #2a1810;
     --wood-light: #3e2723;
     --ink: #4a1416;
+    --romantic-red: #b91c1c;
+    --rose-red: #be123c;
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -81,7 +83,6 @@
     padding: 24px;
   }
   #scene-envelope::before {
-    /* soft desk-lamp pool of light */
     content: '';
     position: absolute;
     top: 15%;
@@ -141,7 +142,6 @@
       0 10px 30px rgba(0,0,0,0.5);
     overflow: hidden;
   }
-  /* paper grain on envelope */
   .envelope-body::after {
     content: '';
     position: absolute;
@@ -222,7 +222,6 @@
     opacity: 1;
     transform: translateY(-22%);
   }
-  /* faint writing lines on preview letter */
   .letter-preview::before {
     content: '';
     position: absolute;
@@ -284,7 +283,6 @@
       0 6px 14px rgba(0,0,0,0.35),
       0 24px 60px rgba(0,0,0,0.45),
       inset 0 0 60px rgba(180, 140, 80, 0.12);
-    /* deckled edge effect */
     clip-path: polygon(
       0.5% 0.3%, 1.4% 0%, 4% 0.4%, 8% 0.1%, 14% 0.5%, 22% 0%, 32% 0.4%, 45% 0.1%, 58% 0.5%, 72% 0%, 84% 0.4%, 93% 0.1%, 98% 0.5%, 99.5% 0.3%,
       99.7% 1.5%, 100% 4%, 99.6% 8%, 99.9% 14%, 99.5% 22%, 100% 32%, 99.6% 45%, 99.9% 58%, 99.5% 72%, 100% 84%, 99.6% 93%, 99.9% 98%, 99.5% 99.6%,
@@ -292,7 +290,6 @@
       0.4% 98%, 0% 93%, 0.4% 84%, 0.1% 72%, 0.5% 58%, 0% 45%, 0.4% 32%, 0.1% 22%, 0.5% 14%, 0% 8%, 0.4% 4%, 0.3% 1.5%
     );
   }
-  /* paper grain + faint guide lines */
   .paper::before {
     content: '';
     position: absolute;
@@ -304,7 +301,6 @@
       repeating-linear-gradient(90deg, rgba(120,80,40,0.02) 0 1px, transparent 1px 2px);
     opacity: 0.7;
   }
-  /* warm vignette on paper edges */
   .paper::after {
     content: '';
     position: absolute;
@@ -317,7 +313,7 @@
     font-family: 'Playfair Display', serif;
     font-style: italic;
     font-size: clamp(22px, 4.5vw, 30px);
-    color: var(--burgundy);
+    color: var(--romantic-red);
     margin-bottom: 1.5em;
     position: relative;
     z-index: 1;
@@ -342,6 +338,18 @@
     text-align: center;
   }
 
+  /* ── Romantic red lines ── */
+  .letter-body p.red-line {
+    color: var(--romantic-red);
+    font-style: italic;
+  }
+
+  /* ── Rose-red (slightly different shade) for the "only mine" line ── */
+  .letter-body p.red-rose {
+    color: var(--rose-red);
+    font-style: italic;
+  }
+
   /* Normal word — fades in when .shown is added */
   .word {
     display: inline-block;
@@ -356,23 +364,18 @@
     transform: translateY(0);
   }
 
-  /* Typo-wrap is a container for typo chars + the corrected word.
-     It is always visible (no fade-in), so the typo animation can be seen. */
   .word.typo-wrap {
     opacity: 1;
     transform: none;
     transition: none;
   }
 
-  /* Each wrong character — inline, no spacing, so they read as a continuous misspelling */
   .typo-char {
     display: inline;
     color: var(--burgundy-soft);
     opacity: 0.85;
   }
 
-  /* The blinking caret that follows the writing position.
-     It is inserted right after the currently-typed word/char. */
   .caret {
     display: inline-block;
     width: 2px;
@@ -392,9 +395,6 @@
     z-index: 1;
   }
 
-  /* Wrapper holds the signature text + the pen-nib as siblings.
-     This is critical: clip-path on .signature would clip a child pen-nib,
-     so the pen-nib must live OUTSIDE .signature. */
   .signature-wrap {
     position: relative;
     display: inline-block;
@@ -407,9 +407,7 @@
     color: var(--burgundy);
     line-height: 1.2;
     display: inline-block;
-    /* Allow multi-line signatures (e.g. "Forever Yours\nAvinaba") */
     white-space: pre-line;
-    /* clip-path animated via JS; starts fully hidden from the right */
     clip-path: inset(0 100% 0 0);
     transition: clip-path 0.05s linear;
   }
@@ -419,8 +417,6 @@
     position: absolute;
     top: 52%;
     left: 0;
-    /* translate(-100%, -50%) places the nib's right edge at `left`,
-       so the tip sits exactly at the leading edge of the reveal. */
     transform: translate(-100%, -50%);
     width: 16px;
     height: 16px;
@@ -656,40 +652,36 @@
 
 const LETTER_CONTENT = {
   salutation: "My Dear Priontee,",
-  // Each item in `paragraphs` is one paragraph. It can be either:
-  //   - An array of words:  ["word1", "word2", ...]
-  //   - A special block:    { class: "iloveryou-block", multiline: true,
-  //                            words: ["I love you", "I love you", ...] }
-  //     (multiline: true inserts a <br> after each word so each appears
-  //      on its own line during the typing animation.)
-  // To create a charming "typo" moment, use: { typo: "wrong", correct: "right" }
-  //   — the wrong text types out char-by-char, pauses, backspaces,
-  //     then the correct word appears.
   paragraphs: [
     ["(Ektu", "beshi", "formally", "shuru", "korlam", "i", "guess)"],
-    ["I", "love", "you"],
+    { class: "red-line", words: ["I", "love", "you"] },
     ["Dekhte", "dekhte", "kibhabe", "jani", "dui", "mash", "hoye", "gelo,", "ter", "o", "pailam", "na..."],
     ["Well,", "tor", "sathe", "jokhon", "time", "spend", "kori", "tokhon", "emoni", "hoy,", "ter", "pai", "na", "time", "kon", "dik", "diye", "jay."],
-    ["Mone", "hocche", "ei", "duidin", "agei", "na", "amra", "relation", "e", "gelam", "but", "already", "dui", "mash", "hoye", "gese."],
+    ["Mone", "hocche", "ei", "duidin", "agei", "na", "amra", "relation", "e", "gelam", "but", "already", "dui", "mash", "hoye", "gese.", "Dui", "mash", "age", "amr", "proposal", "ta", "accept", "korsili", "bole", "aj", "ekhono", "amra", "eksathe."],
     ["I", "know,", "ei", "long", "distance", "relation", "onek", "tough...", "but", "ei", "distance", "amader", "bhalobashar", "shamne", "kichui", "na.", "Protidin", "shokale", "uthe", "toke", "age", "msg", "dite", "mon", "chay,", "protidin", "rat", "e", "ghumanor", "time", "e", "tor", "kotha", "e", "mathay", "ghure."],
-    ["And....", "Toke", "kichu", "bolar", "chilo...", "Tui", "amr", "gf,", "amr", "shobcheye", "trusted", "manush,", "so", "tor", "theke", "to", "lukiye", "rakhar", "mane", "nei.", "Ei", "koyekdin", "age", "amr", "mathay", "actually", "onk", "ulta", "palta", "chinta", "ashtesilo", "ze", "adou", "tor", "sathe", "relation", "e", "giye", "thik", "korsi", "kina,", "breakup", "er", "kotha", "o", "ghurtesilo", "mathay.....", "But,", "eshob", "ulta", "palta", "chinta", "amake", "manipulate", "korte", "pare", "nai."],
+    ["And....", "Toke", "kichu", "bolar", "chilo...", "Tui", "amr", "gf,", "amr", "shobcheye", "trusted", "manush,", "so", "tor", "theke", "to", "lukiye", "rakhar", "mane", "nei.", "Ei", "koyekdin", "age", "amr", "mathay", "actually", "onk", "ulta", "palta", "chinta", "ashtesilo", "je", "adou", "tor", "sathe", "relation", "e", "giye", "thik", "korsi", "kina,", "breakup", "er", "kotha", "o", "ghurtesilo", "mathay.....", "But,", "eshob", "ulta", "palta", "chinta", "amake", "manipulate", "korte", "pare", "nai."],
     ["Shotti", "Priontee,", "toke", "onek", "bhalobashi", "and", "trust", "kori.", "Janina", "keno", "eshob", "ulta", "palta", "chinta", "ashche...", "But", "ekhon", "eshob", "nai", "mathay."],
-    ["I", "love", "you.", "And", "ofcourse", "ami", "kono", "bhabei", "chai", "na", "tor", "sathe", "breakup", "hok."],
+    { class: "red-line", words: ["I", "love", "you.", "And", "ofcourse", "ami", "kono", "bhabei", "chai", "na", "tor", "sathe", "breakup", "hok."] },
     ["Jaihok,", "ei", "khushir", "din", "e", "koto", "kichu", "bollam..."],
     ["2", "months...", "hmm.....", "onek", "shomoy...", "abr", "khub", "e", "olpo", "shomoy."],
-    ["I", "know,", "amader", "relation", "e", "onek", "ups", "and", "downs", "ashche", "and", "etao", "jani", "ze", "future", "eo", "ashbe.", "But,", "eshob", "temporary", "problems", "amader", "bond", "bhangte", "parbe", "na.", "Ami", "to", "ofcourse", "konodin", "give", "up", "korbo", "na.", "Tui", "just", "korish", "na....", "sathe", "thakis", "amr", "and", "kono", "problem", "hoile", "shei", "problem", "tar", "sathe", "duijon", "mile", "fight", "korbo,", "eke", "oporer", "sathe", "fight", "na."],
-    ["I", "love", "you", "and", "I", "care", "about", "you,", "really."],
+    ["I", "know,", "amader", "relation", "e", "onek", "ups", "and", "downs", "ashche", "and", "etao", "jani", "je", "future", "eo", "ashbe.", "But,", "eshob", "temporary", "problems", "amader", "bond", "bhangte", "parbe", "na.", "Ami", "to", "ofcourse", "konodin", "give", "up", "korbo", "na.", "Tui", "just", "korish", "na....", "sathe", "thakis", "amr", "and", "kono", "problem", "hoile", "shei", "problem", "tar", "sathe", "duijon", "mile", "fight", "korbo,", "eke", "oporer", "sathe", "fight", "na."],
+    { class: "red-line", words: ["I", "love", "you", "and", "I", "care", "about", "you,", "really."] },
     ["And", "shotti", "toke", "onek", "trust", "kori", "ami...", "Ami", "jani", "tui", "ei", "trust", "er", "morjada", "rakhbi,", "amakeo", "trust", "korte", "parish", "tui...ami", "kokhono", "betray", "korbona", "ettuk", "jene", "rakh."],
     ["Ami", "shobshomoy", "e", "tor", "sathe", "thakbo,", "tor", "jekono", "proyojon", "e", "tor", "sathe", "thakbo", "ami."],
+    ["I", "know,", "toke", "ami", "hayto", "koyekbar", "shotti", "hurt", "korsi,", "tui", "o", "korsish", "amake...", "but", "at", "the", "end", "of", "the", "day,", "tui", "amar", "and", "ami", "tor.", "Keu", "karo", "upor", "give", "up", "na", "korlei", "dekhbi", "je", "relation", "ekdom", "smoothly", "choltese.", "And,", "amra", "duijon", "e", "to", "manush,", "bhogoban", "to", "na,", "bhul", "korbo", "duijon", "e,", "abr", "duijon", "duijon", "ke", "thik", "korbo,", "ebhabei", "to", "chole", "ekta", "relation,", "bujhos", "to."],
+    ["Tor", "jekono", "problem", "er", "bepare", "tui", "amake", "bolte", "parish,", "hayto", "solution", "dite", "parbona", "always...but", "tor", "sathe", "thakbo", "ofcourse."],
+    { class: "red-line", words: ["I", "love", "you", "so", "much", "my", "princess!"] },
+    { class: "red-rose", words: ["(Btw,", "you", "are", "only", "mine...forever", "😁)"] },
     ["Kotto", "kichu", "lekhlam..", "Don't", "mind.", "Hehe"],
     ["And", "last", "bar", "er", "moto", "ei", "bar", "o", "lekhi,"],
     { class: "iloveryou-block", multiline: true, words: [
-      "I love you", "I love you", "I love you", "I love you", "I love you",
-      "I love you", "I love you", "I love you", "I love you", "I love you",
-      "I love you", "I love you", "I love you", "I love you", "I love you",
-      "I love you", "I love you", "I love you", "I love you", "I love you"
+      "I love you ❤️", "I love you ❤️", "I love you ❤️", "I love you ❤️", "I love you ❤️",
+      "I love you ❤️", "I love you ❤️", "I love you ❤️", "I love you ❤️", "I love you ❤️",
+      "I love you ❤️", "I love you ❤️", "I love you ❤️", "I love you ❤️", "I love you ❤️",
+      "I love you ❤️", "I love you ❤️", "I love you ❤️"
     ]},
-    ["By", "the", "way,", "ebar", "kintu", "late", "hoi", "nai....", "Last", "bar", "onk", "late", "e", "disilam", "letter", "ta....", "Btw,", "Amar", "Kintu", "Mone", "Ache.", "Last time", "Amar", "Marriage", "Proposal", "Accept", "Korsili", "Hehehe"]
+    ["By", "the", "way,", "ebar", "kintu", "late", "hoi", "nai....", "Last", "bar", "onk", "late", "e", "disilam", "letter", "ta...."],
+    ["And", "amr", "kintu", "mone", "ase", "last", "time", "amr", "marriage", "proposal", "accept", "korsili", "tui.", "Hehehehe."]
   ],
   signature: "Forever Yours\nAvinaba",
   date: "July 29, 2026"
@@ -716,7 +708,6 @@ const Sound = {
 
     this.masterGain = new Tone.Gain(0.9).toDestination();
 
-    // --- Ambient warm pad (filtered noise + soft sine drone) ---
     this.ambientFilter = new Tone.Filter({
       type: "lowpass",
       frequency: 600,
@@ -737,12 +728,10 @@ const Sound = {
     drone1.start();
     drone2.start();
 
-    // slow LFO on filter for a breathing feel
     const lfo = new Tone.LFO({ frequency: 0.07, min: 400, max: 900 });
     lfo.connect(this.ambientFilter.frequency);
     lfo.start();
 
-    // --- Pencil scratch (bandpassed noise burst) ---
     this.pencilFilter = new Tone.Filter({
       type: "bandpass", frequency: 2400, Q: 1.2
     }).connect(this.masterGain);
@@ -752,7 +741,6 @@ const Sound = {
       volume: -22
     }).connect(this.pencilFilter);
 
-    // --- Paper rustle (longer filtered noise sweep) ---
     this.paperFilter = new Tone.Filter({
       type: "bandpass", frequency: 1200, Q: 0.8
     }).connect(this.masterGain);
@@ -762,7 +750,6 @@ const Sound = {
       volume: -18
     }).connect(this.paperFilter);
 
-    // --- Soft chime (poly synth, C major) — played when the letter finishes ---
     this.chimeSynth = new Tone.PolySynth(Tone.Synth, {
       oscillator: { type: "sine" },
       envelope: { attack: 0.6, decay: 0.5, sustain: 0.3, release: 4 },
@@ -796,7 +783,6 @@ const Sound = {
   chime() {
     if (!this.ready || this.muted) return;
     try {
-      // C major chord, gentle
       this.chimeSynth.triggerAttackRelease(["C4", "E4", "G4", "C5"], "2n");
     } catch (e) {}
   },
@@ -823,7 +809,6 @@ async function openEnvelope() {
   await Sound.start();
   envelope.classList.add('open');
   Sound.paper();
-  // After the flap opens + letter peeks, transition to the letter scene
   setTimeout(() => {
     Sound.paper();
     sceneEnvelope.classList.add('hidden');
@@ -855,14 +840,12 @@ const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)
 
 let typingComplete = false;
 let typingAborted = false;
-let activeCaret = null;  // tracked so the skip button can remove it instantly
+let activeCaret = null;
 
 function renderParagraphs() {
   letterBody.innerHTML = '';
   LETTER_CONTENT.paragraphs.forEach((para) => {
     const p = document.createElement('p');
-    // A paragraph can be either an array of words, or an object with
-    // { class, multiline, words } for special blocks.
     const isObj = !Array.isArray(para);
     const words = isObj ? para.words : para;
     if (isObj && para.class) p.classList.add(para.class);
@@ -873,15 +856,12 @@ function renderParagraphs() {
         elem.className = 'word';
         elem.textContent = w;
       } else if (w.typo) {
-        // wrapper span; will receive the typo animation
         elem = document.createElement('span');
         elem.className = 'word typo-wrap';
         elem.dataset.typo = w.typo;
         elem.dataset.correct = w.correct;
       }
       p.appendChild(elem);
-      // For multiline blocks, insert a <br> after each word (except the last)
-      // so each item appears on its own line.
       if (isObj && para.multiline && wIdx < words.length - 1) {
         p.appendChild(document.createElement('br'));
       }
@@ -893,11 +873,6 @@ function renderParagraphs() {
 function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
 function rand(min, max) { return Math.random() * (max - min) + min; }
 
-/* The caret follows the writing position. It is placed:
-   - right AFTER the currently-typed word (for normal words)
-   - INSIDE the typo-wrap, after the last typed wrong char (for typos)
-   This ensures the caret always sits at the natural writing position,
-   never floating in empty space. */
 async function typeOut() {
   if (prefersReducedMotion) {
     document.querySelectorAll('.word').forEach(w => {
@@ -921,15 +896,12 @@ async function typeOut() {
     const w = words[i];
 
     if (w.classList.contains('typo-wrap')) {
-      // --- Typo animation ---
       const wrong = w.dataset.typo;
       const correct = w.dataset.correct;
       const wrongChars = wrong.split('');
 
-      // Move caret INSIDE the wrap; wrong chars will be inserted before it
       w.appendChild(caret);
 
-      // Type wrong chars one at a time
       for (let c = 0; c < wrongChars.length; c++) {
         if (typingAborted) { caret.remove(); activeCaret = null; return; }
         const ch = document.createElement('span');
@@ -941,7 +913,6 @@ async function typeOut() {
       }
       await sleep(220);
 
-      // Backspace: remove wrong chars in reverse
       const charSpans = Array.from(w.querySelectorAll('.typo-char'));
       for (let c = charSpans.length - 1; c >= 0; c--) {
         if (typingAborted) { caret.remove(); activeCaret = null; return; }
@@ -950,17 +921,13 @@ async function typeOut() {
         await sleep(40);
       }
 
-      // Show the correct word as a text node (before the caret)
       const textNode = document.createTextNode(correct);
       w.insertBefore(textNode, caret);
       w.classList.add('shown');
       Sound.pencil();
 
-      // Move caret back outside the wrap, right after it
       w.parentNode.insertBefore(caret, w.nextSibling);
     } else {
-      // --- Normal word ---
-      // Place caret immediately AFTER this word (before the next word/space/null)
       w.parentNode.insertBefore(caret, w.nextSibling);
       w.classList.add('shown');
       Sound.pencil();
@@ -978,7 +945,6 @@ function finishTyping() {
   typingComplete = true;
   skipBtn.classList.remove('visible');
   drawSignature();
-  // Reveal the date once the signature has mostly drawn
   setTimeout(() => dateEl.classList.add('shown'), 1800);
 }
 
@@ -999,11 +965,9 @@ function drawSignature() {
   const start = performance.now();
   function step(now) {
     const t = Math.min(1, (now - start) / duration);
-    // ease-out cubic
     const eased = 1 - Math.pow(1 - t, 3);
-    const reveal = 100 - (eased * 100);  // 100 → 0
+    const reveal = 100 - (eased * 100);
     signatureEl.style.clipPath = `inset(0 ${reveal}% 0 0)`;
-    // Pen-nib's right edge tracks the leading edge of the reveal
     penNib.style.left = `${eased * 100}%`;
     if (t < 1) {
       requestAnimationFrame(step);
@@ -1011,7 +975,6 @@ function drawSignature() {
       signatureEl.classList.add('done');
       signatureWrap.classList.remove('drawing');
       signatureWrap.classList.add('done');
-      // Soft chime to mark the end of the letter
       setTimeout(() => Sound.chime(), 250);
     }
   }
@@ -1021,27 +984,22 @@ function drawSignature() {
 async function startLetter() {
   salutationEl.textContent = LETTER_CONTENT.salutation;
   signatureEl.textContent = LETTER_CONTENT.signature;
-  // Update the date text node (firstChild) without touching the heart span
   if (dateEl.firstChild && dateEl.firstChild.nodeType === Node.TEXT_NODE) {
     dateEl.firstChild.nodeValue = LETTER_CONTENT.date;
   }
   renderParagraphs();
 
-  // Show the skip button after 5 seconds (if still typing)
   setTimeout(() => {
     if (!typingComplete) skipBtn.classList.add('visible');
   }, 5000);
 
-  // Brief pause so the paper feels settled before writing begins
   await sleep(600);
   typeOut();
 }
 
 skipBtn.addEventListener('click', () => {
   typingAborted = true;
-  // Remove the caret immediately so it doesn't linger mid-sleep
   if (activeCaret) { activeCaret.remove(); activeCaret = null; }
-  // Reveal every word instantly; collapse typo-wraps to their correct word
   document.querySelectorAll('.word').forEach(w => {
     if (w.classList.contains('typo-wrap')) {
       w.textContent = w.dataset.correct;
