@@ -377,7 +377,7 @@
     left: 4%;
     opacity: 0;
     pointer-events: none;
-    z-index: 1;
+    z-index: 0;
     transition: opacity 0.3s ease;
   }
   #doodle-heart-path {
@@ -397,20 +397,14 @@
     font-family: 'Caveat', cursive;
     font-size: clamp(18px, 4vw, 24px);
     color: var(--burgundy-soft);
-    margin-top: 6px;
+    margin-top: 36px;
     opacity: 0;
     transition: opacity 0.8s ease 0.4s;
   }
   .date.shown { opacity: 1; }
   .date .extra-heart {
-    display: inline-block;
-    margin-left: 8px;
-    color: var(--burgundy);
-    opacity: 0;
-    transform: scale(0.5);
-    transition: opacity 0.4s ease, transform 0.4s ease;
+    display: none;
   }
-  .date .extra-heart.shown { opacity: 1; transform: scale(1); }
 
   .skip-btn {
     position: fixed;
@@ -582,10 +576,7 @@
           </svg>
         </div>
       </div>
-      <div class="date" id="date">
-        July 29, 2026
-        <span class="extra-heart" aria-hidden="true">♥</span>
-      </div>
+      <div class="date" id="date">July 29, 2026</div>
     </div>
 
   </article>
@@ -613,22 +604,21 @@ const LETTER_CONTENT = {
     { class: "red-line", words: ["I", "love", "you"] },
     ["Dekhte", "dekhte", "kibhabe", "jani", "dui", "mash", "hoye", "gelo,", "ter", "o", "pailam", "na..."],
     ["Well,", "tor", "sathe", "jokhon", "time", "spend", "kori", "tokhon", "emoni", "hoy,", "ter", "pai", "na", "time", "kon", "dik", "diye", "jay."],
-    ["Mone", "hocche", "ei", "duidin", "agei", "na", "amra", "relation", "e", "gelam", "but", "already", "dui", "mash", "hoye", "gese."],
+    ["Mone", "hocche", "ei", "duidin", "agei", "na", "amra", "relation", "e", "gelam", "but", "already", "dui", "mash", "hoye", "gese.", "Dui", "mash", "age", "amr", "proposal", "ta", "accept", "korsili", "bole", "aj", "ekhono", "amra", "eksathe."],
     ["I", "know,", "ei", "long", "distance", "relation", "onek", "tough...", "but", "ei", "distance", "amader", "bhalobashar", "shamne", "kichui", "na.", "Protidin", "shokale", "uthe", "toke", "age", "msg", "dite", "mon", "chay,", "protidin", "rat", "e", "ghumanor", "time", "e", "tor", "kotha", "e", "mathay", "ghure."],
-    ["And....", "Toke", "kichu", "bolar", "chilo...", "Tui", "amr", "gf,", "amr", "shobcheye", "trusted", "manush,", "so", "tor", "theke", "to", "lukiye", "rakhar", "mane", "nei.", "Ei", "koyekdin", "age", "amr", "mathay", "actually", "onk", "ulta", "palta", "chinta", "ashtesilo", "je", "adou", "tor", "sathe", "relation", "e", "giye", "thik", "korsi", "kina,", "breakup", "er", "kotha", "o", "ghurtesilo", "mathay.....", "But,", "eshob", "ulta", "palta", "chinta", "amake", "manipulate", "korte", "pare", "nai."],
-    ["Shotti", "Priontee,", "toke", "onek", "bhalobashi", "and", "trust", "kori.", "Janina", "keno", "eshob", "ulta", "palta", "chinta", "ashche...", "But", "ekhon", "eshob", "nai", "mathay."],
+    ["Shotti", "Priontee,", "toke", "onek", "bhalobashi", "and", "trust", "kori."],
     { class: "red-line", words: ["I", "love", "you.", "And", "ofcourse", "ami", "kono", "bhabei", "chai", "na", "tor", "sathe", "breakup", "hok."] },
-    ["Jaihok,", "ei", "khushir", "din", "e", "koto", "kichu", "bollam..."],
+    ["Koto", "din", "hoye", "gelo", "taina?"],
     ["2", "months...", "hmm.....", "onek", "shomoy...", "abr", "khub", "e", "olpo", "shomoy."],
     ["I", "know,", "amader", "relation", "e", "onek", "ups", "and", "downs", "ashche", "and", "etao", "jani", "je", "future", "eo", "ashbe.", "But,", "eshob", "temporary", "problems", "amader", "bond", "bhangte", "parbe", "na.", "Ami", "to", "ofcourse", "konodin", "give", "up", "korbo", "na.", "Tui", "just", "korish", "na....", "sathe", "thakis", "amr", "and", "kono", "problem", "hoile", "shei", "problem", "tar", "sathe", "duijon", "mile", "fight", "korbo,", "eke", "oporer", "sathe", "fight", "na."],
     { class: "red-line", words: ["I", "love", "you", "and", "I", "care", "about", "you,", "really."] },
     ["And", "shotti", "toke", "onek", "trust", "kori", "ami...", "Ami", "jani", "tui", "ei", "trust", "er", "morjada", "rakhbi,", "amakeo", "trust", "korte", "parish", "tui...ami", "kokhono", "betray", "korbona", "ettuk", "jene", "rakh."],
     ["Ami", "shobshomoy", "e", "tor", "sathe", "thakbo,", "tor", "jekono", "proyojon", "e", "tor", "sathe", "thakbo", "ami."],
     ["I", "know,", "toke", "ami", "hoyto", "koyekbar", "shotti", "hurt", "korsi,", "tui", "o", "korsish", "amake...", "but", "at", "the", "end", "of", "the", "day,", "tui", "amar", "and", "ami", "tor.", "Keu", "karo", "upor", "give", "up", "na", "korlei", "dekhbi", "je", "relation", "ekdom", "smoothly", "choltese.", "And,", "amra", "duijon", "e", "to", "manush,", "bhogoban", "to", "na,", "bhul", "korbo", "duijon", "e,", "abr", "duijon", "duijon", "ke", "thik", "korbo,", "ebhabei", "to", "chole", "ekta", "relation,", "bujhos", "to."],
-    ["Bisshash", "kor", "Priontee,", "sharajibon", "thakte", "chai", "tor", "sathe,", "kokhono", "tor", "theke", "alada", "hoite", "chai", "na.", "Joto", "problem", "e", "ashuk", "na", "keno,", "din", "shesh", "e", "tokei", "choose", "korbo", "ami", "and", "tui", "o", "jodi", "same", "koros", "tahole", "dekhbi", "amader", "eksathe", "thaka", "theke", "keu", "atkate", "parbe", "na."],
     ["Tor", "jekono", "problem", "er", "bepare", "tui", "amake", "bolte", "parish,", "hoyto", "solution", "dite", "parbona", "always...but", "tor", "sathe", "thakbo", "ofcourse."],
     { class: "red-line", words: ["I", "love", "you", "so", "much", "my", "princess!"] },
     { class: "red-rose", words: ["You'll", "always", "be", "my", "favourite", "person.", "You'll", "always", "be", "the", "one", "who", "deserves", "a", "special", "place", "in", "my", "heart."] },
+    { class: "red-rose", words: ["(Btw,", "you", "are", "only", "mine...forever", "😁)"] },
     ["Kotto", "kichu", "lekhlam..", "Don't", "mind.", "Hehe"],
     ["And", "last", "bar", "er", "moto", "ei", "bar", "o", "lekhi,"],
     { class: "iloveryou-block", multiline: true, words: [
@@ -900,9 +890,7 @@ function startDoodleHeart() {
 async function startLetter() {
   salutationEl.textContent = LETTER_CONTENT.salutation;
   signatureEl.textContent = LETTER_CONTENT.signature;
-  if (dateEl.firstChild && dateEl.firstChild.nodeType === Node.TEXT_NODE) {
-    dateEl.firstChild.nodeValue = LETTER_CONTENT.date;
-  }
+  dateEl.firstChild.nodeValue = LETTER_CONTENT.date;
   renderParagraphs();
 
   setTimeout(() => {
@@ -968,22 +956,6 @@ function showToast(text) {
 document.getElementById('paper').addEventListener('contextmenu', (e) => {
   e.preventDefault();
   showToast('Copy my heart?  ♥');
-});
-
-/* ================================================================
-   EASTER EGG 3: Triple-click signature → heart
-   ================================================================ */
-let sigClicks = 0;
-let sigClickTimer = null;
-signatureWrap.addEventListener('click', () => {
-  sigClicks++;
-  clearTimeout(sigClickTimer);
-  sigClickTimer = setTimeout(() => { sigClicks = 0; }, 600);
-  if (sigClicks >= 3) {
-    sigClicks = 0;
-    const heart = dateEl.querySelector('.extra-heart');
-    if (heart) heart.classList.add('shown');
-  }
 });
 
 /* ================================================================
